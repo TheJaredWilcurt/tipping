@@ -6,18 +6,43 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
   </head>
   <body>
-    <div id="app" class="wrapper">
-      <input type="text" v-model.num="cost">
-      <div class="button-group">
-        <button class="tip === 15 ? 'active' : ''" @click="tip = 15">15%</button>
-        <button class="tip === 20 ? 'active' : ''" @click="tip = 20">20%</button>
-        <button class="tip === 25 ? 'active' : ''" @click="tip = 25">25%</button>
+    <div id="app" class="container text-center mt-3">
+      <h1>Tip Calculator</h1>
+      <div class="row">
+        <input
+          type="text"
+          class="form-control form-control-lg text-center mt-4 mb-2"
+          style="font-size: 3em; padding: 0.75em;"
+          :value="cost | fix"
+          @change="updateCost($event)"
+        >
       </div>
-      <div>Standard tip: {{ standardTip | fix }} (Total + tip = {{ (cost + standardTip) | fix }})</div>
-      <div>Rounded up: {{ roundUpTip | fix }} (Total + tip = {{ (cost + roundUpTip) | fix }})</div>
+      <div class="row mt-2">
+        <div class="btn-group btn-group-lg mx-auto my-4">
+          <input
+            v-model="tip"
+            type="range"
+            min="10"
+            max="30"
+            class="mr-2"
+          >
+          <span class="h4">{{ tip }}%</span>
+        </div>
+      </div>
+      <div>
+        <strong>Standard tip:</strong>
+        {{ standardTip | fix }}
+        <em>(Total + tip = {{ (cost + standardTip) | fix }})</em>
+      </div>
+      <div>
+        <strong>Rounded up:</strong>
+        {{ roundUpTip | fix }}
+        <em>(Total + tip = {{ (cost + roundUpTip) | fix }})</em>
+      </div>
     </div>
+
     <script>
-      var app = new Vue({
+      let app = new Vue({
         el: '#app',
         data: {
           cost: 0,
@@ -25,24 +50,33 @@
         },
         computed: {
           standardTip: function () {
+            let cost = parseInt(this.cost);
             let percent = this.tip / 100;
-            let tip = this.cost * percent;
+            let tip = cost * percent;
             return tip;
           },
           roundUpTip: function () {
-            let subTotal = Math.ceil(this.standardTip + this.cost);
-            let tip = subTotal - this.cost;
+            let cost = Number(this.cost);
+            let standardTip = Number(this.standardTip);
+            let subTotal = Math.ceil(standardTip + cost);
+            let tip = subTotal - cost;
             return tip;
           }
         },
-        watch: {
-          cost: function (num) {
-            this.cost = num.toFixed(2);
+        methods: {
+          updateCost: function (evt) {
+            this.cost = Number(evt.currentTarget.value);
+          },
+          updateTip: function (evt) {
+            this.tip = Number(evt.currentTarget.value);
           }
         },
         filters: {
           fix: function (val) {
-            return val.toFixed(2);
+            if (typeof(val) === 'number') {
+              return val.toFixed(2);
+            }
+            return parseInt(val).toFixed(2);
           }
         }
       });
