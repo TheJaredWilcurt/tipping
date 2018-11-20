@@ -26,7 +26,7 @@
         computed: {
           standardTip: function () {
             let percent = this.tip / 100;
-            let tip = cost * percent;
+            let tip = this.cost * percent;
             return tip.toFixed(2);
           },
           roundUpTip: function () {
