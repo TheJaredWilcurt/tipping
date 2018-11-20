@@ -13,8 +13,8 @@
         <button class="tip === 20 ? 'active' : ''" @click="tip = 20">20%</button>
         <button class="tip === 25 ? 'active' : ''" @click="tip = 25">25%</button>
       </div>
-      <div>Standard tip: {{ standardTip }} (Total + tip = {{ (cost + standardTip).toFixed(2) }})</div>
-      <div>Rounded up: {{ roundUpTip }} (Total + tip = {{ (cost + roundUpTip).toFixed(2) }})</div>
+      <div>Standard tip: {{ standardTip | fix }} (Total + tip = {{ (cost + standardTip) | fix }})</div>
+      <div>Rounded up: {{ roundUpTip | fix }} (Total + tip = {{ (cost + roundUpTip) | fix }})</div>
     </div>
     <script>
       var app = new Vue({
@@ -27,19 +27,23 @@
           standardTip: function () {
             let percent = this.tip / 100;
             let tip = this.cost * percent;
-            return tip.toFixed(2);
+            return tip;
           },
           roundUpTip: function () {
             let subTotal = Math.ceil(this.standardTip + this.cost);
             let tip = subTotal - this.cost;
-            return tip.toFixed(2);
+            return tip;
           }
         },
         watch: {
           cost: function (num) {
             this.cost = num.toFixed(2);
           }
-        }
+        },
+        filters: {
+          fix: function (val) {
+            return val.toFixed(2);
+          }
       });
     </script>
   </body>
